@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/database/entities/user.entity';
@@ -15,23 +21,34 @@ export class RegisterService {
     private jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<Response> {
-    const res = { code: 200, message: [], data: null };
+  async register(registerDto: RegisterDto): Promise<any> {
+    try {
+      const checkUser = await this.usersRepository.findOne({
+        where: { username: registerDto.username },
+      });
 
-    const salt = randomBytes(16).toString('base64');
-    const cryptStr = scryptSync(registerDto.password, salt, 64);
+      if (checkUser) {
+        throw new HttpException('User existed', HttpStatus.BAD_REQUEST);
+      }
 
-    const hashPassword = salt + ':' + cryptStr;
+      const salt = randomBytes(16).toString('base64');
+      const cryptStr = scryptSync(registerDto.password, salt, 64);
+      const hashPassword = salt + ':' + cryptStr.toString('base64');
 
-    const user = this.usersRepository.create();
+      const user = this.usersRepository.create();
 
-    user.name = registerDto.name;
-    user.username = registerDto.username;
-    user.password = hashPassword;
+      user.name = registerDto.name;
+      user.username = registerDto.username;
+      user.password = hashPassword;
 
-    await this.usersRepository.insert(user);
+      await this.usersRepository.insert(user);
 
-    const response = new Response(res.code, res.message, '');
-    return response;
+      const response = new Response(201, 'Success', '');
+
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }

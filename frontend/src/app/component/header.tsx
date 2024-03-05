@@ -12,11 +12,11 @@ export default function Header() {
 
         <div className="col-span-9 flex justify-end">
           <div>
-            <button>dsadsa</button>
+            <button>Log In </button>
           </div>
           
           <div>
-            <button>dsadsa</button>
+            <button>Register</button>
           </div>
         </div>
         

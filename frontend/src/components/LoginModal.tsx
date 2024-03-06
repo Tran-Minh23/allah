@@ -1,9 +1,46 @@
 import { LockIcon } from "@/icons/LockIcon";
 import { MailIcon } from "@/icons/MailIcon";
+import authService from "@/services/auth";
 import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+
+const defaultValue = {
+  username: "",
+  password: ""
+}
 
 export default function LoginModal(props: any) {
     const { isOpen, handleOpenChange, setIsOpenLogin } = props;
+
+    const {
+      register,
+      handleSubmit,
+      reset,
+      formState: { errors },
+    } = useForm({
+      mode: "onBlur",
+      defaultValues: {
+        ...defaultValue
+      },
+    });
+
+    const onSubmit = async (event: any) => {  
+      try {
+        const result = await authService.login(event);
+        console.log(result);
+
+        reset({ ...defaultValue });
+        handleOpenChange(false);
+        toast.success('Successful!');
+      }
+      catch (error: any) {
+        console.log(error);
+        if (error.response) {
+          toast.error(error.response.data.message);
+        }
+      }
+    }
 
     return(
         <Modal backdrop="opaque" isOpen={isOpen} onOpenChange={handleOpenChange} classNames={{
@@ -11,20 +48,24 @@ export default function LoginModal(props: any) {
           }}>
         <ModalContent>
           {(onClose) => (
-            <>
+            <form>
               <ModalHeader className="flex flex-col gap-1 bg-white rounded-tl rounded-tr">Log in</ModalHeader>
               <ModalBody className="bg-white">
                 <Input
-                  autoFocus
+                  autoComplete="on"
                   endContent={
                     <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                   }
                   label="Username"
                   placeholder="Enter your username"
                   variant="bordered"
-                  classNames={{ label: "mb-6", input: ["placeholder:mt-2"], inputWrapper: "border-2 rounded" }}
+                  isInvalid={errors?.hasOwnProperty('name')}
+                  errorMessage={errors['username'] && "Username is required"}
+                  {...register("username", { required: 'required'})}
                 />
+
                 <Input
+                  autoComplete="on"
                   endContent={
                     <LockIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                   }
@@ -32,7 +73,9 @@ export default function LoginModal(props: any) {
                   placeholder="Enter your password"
                   type="password"
                   variant="bordered"
-                  classNames={{ label: "mb-6", input: ["placeholder:mt-2"], inputWrapper: "border-2 rounded" }}
+                  isInvalid={errors?.hasOwnProperty('password')}
+                  errorMessage={errors['password'] && "Password is required"}
+                  {...register("password", { required: 'required'})}
                 />
               </ModalBody>
               <ModalFooter className="bg-white rounded-bl rounded-br">
@@ -45,11 +88,11 @@ export default function LoginModal(props: any) {
                 <Button 
                     className="py-2 px-3 rounded-full font-medium bg-travel-blue text-white hover:bg-travel-blue-ho" 
                     color="primary" 
-                    onPress={() => {onClose(); setIsOpenLogin(false);}}>
+                    onClick={handleSubmit(onSubmit)}>
                         Sign in
                 </Button>
               </ModalFooter>
-            </>
+            </form>
           )}
         </ModalContent>
       </Modal>

@@ -1,9 +1,8 @@
-import { LoginUser, RegisterUser } from "@/entities/authEntity";
 import api from "./api"
 
-const baseUrl = '/auth';
+const baseUrl = '/hotel';
 
-const authService = {
+const hotelService = {
     // async initUser(accessToken: string): Promise<any> {
     //   const response = await api.post(
     //     `${baseUrl}/init`,
@@ -34,17 +33,11 @@ const authService = {
     //   return response.data
     // },
 
-    register: async (data: RegisterUser): Promise<any> => {
-        const response = await api.post(`${baseUrl}/register`, data)
+    getAll: async (): Promise<any> => {
+        const response = await api.get(`${baseUrl}`)
 
         return response.data;
     },
-
-    login: async (data: LoginUser): Promise<any> => {
-        const response = await api.post(`${baseUrl}/login`, data)
-
-        return response.data;
-    }
 }
   
-  export default authService;
+  export default hotelService;

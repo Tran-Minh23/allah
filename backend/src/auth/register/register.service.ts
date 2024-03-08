@@ -5,7 +5,7 @@ import { User } from 'src/database/entities/user.entity';
 import { Repository } from 'typeorm';
 import { RegisterDto } from '../dtos/register.dto';
 import { randomBytes, scryptSync } from 'crypto';
-import { Response } from 'src/common/response';
+import { ResponseT } from 'src/common/responseT';
 
 @Injectable()
 export class RegisterService {
@@ -37,7 +37,7 @@ export class RegisterService {
 
       await this.usersRepository.insert(user);
 
-      const response = new Response(201, 'Success', '');
+      const response = new ResponseT(201, 'Success', '');
 
       return response;
     } catch (error) {

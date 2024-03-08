@@ -11,16 +11,30 @@ import {
 } from '@nextui-org/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { checkCookie } from '../actions';
 
 export default function Dashboard() {
+  const router = useRouter();
   const [listHotel, setListHotel] = useState([]);
 
   const getImageBg = (data: string) => {
     const array = JSON.parse(data);
 
     return array[0];
+  };
+
+  const clickCardHandler = async (hotel: Hotel) => {
+    const isLogin = await checkCookie('token');
+
+    if (!isLogin) {
+      toast.error('You must login first');
+      return;
+    }
+
+    router.push(`/hotel/${hotel.hotel_id}`);
   };
 
   useEffect(() => {
@@ -45,8 +59,14 @@ export default function Dashboard() {
       <div className="grid grid-cols-3 gap-4 gap-y-8">
         {listHotel.length > 0 &&
           listHotel.map((hotel: Hotel) => (
-            <div key={hotel.hotel_id}>
-              <Card className="max-w-[400px]">
+            <button
+              key={hotel.hotel_id}
+              onClick={() => {
+                clickCardHandler(hotel);
+              }}
+            >
+              {/* <Link href={`/hotel/${hotel.hotel_id}`}> */}
+              <Card className="max-w-[400px] cursor-pointer">
                 <CardHeader className="p-0">
                   <div className="absolute top-0 px-3 bg-travel-blue rounded-br-md text-white font-medium">
                     Alobook
@@ -72,7 +92,8 @@ export default function Dashboard() {
                   <p className="font-medium text-[#F96D01]">666.666 VND</p>
                 </CardFooter>
               </Card>
-            </div>
+              {/* </Link> */}
+            </button>
           ))}
       </div>
     </div>

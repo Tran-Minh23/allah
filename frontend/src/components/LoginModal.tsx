@@ -1,6 +1,10 @@
+'use client';
+
+import { setCookie } from '@/app/actions';
 import { LockIcon } from '@/icons/LockIcon';
 import { MailIcon } from '@/icons/MailIcon';
 import authService from '@/services/auth';
+import { parseJwt } from '@/services/helper';
 import {
   Button,
   Input,
@@ -10,6 +14,7 @@ import {
   ModalFooter,
   ModalHeader,
 } from '@nextui-org/react';
+import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 
@@ -19,7 +24,8 @@ const defaultValue = {
 };
 
 export default function LoginModal(props: any) {
-  const { isOpen, handleOpenChange, setIsOpenLogin } = props;
+  const { isOpen, handleOpenChange, setIsOpenLogin, setIsLogin, setName } =
+    props;
 
   const {
     register,
@@ -36,11 +42,16 @@ export default function LoginModal(props: any) {
   const onSubmit = async (event: any) => {
     try {
       const result = await authService.login(event);
-      console.log(result);
 
+      setCookie('token', result.data);
       reset({ ...defaultValue });
       handleOpenChange(false);
       toast.success('Successful!');
+
+      const parsedToken = parseJwt(result.data);
+
+      setIsLogin(true);
+      setName(parsedToken.username);
     } catch (error: any) {
       console.log(error);
       if (error.response) {

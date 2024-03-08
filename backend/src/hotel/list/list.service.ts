@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Response } from 'src/common/response';
+import { ResponseT } from 'src/common/responseT';
 import { Hotel } from 'src/database/entities/hotel.entity';
 import { Repository } from 'typeorm';
 
@@ -11,10 +11,10 @@ export class ListService {
     private hotelRepository: Repository<Hotel>,
   ) {}
 
-  async getAll(): Promise<Response> {
+  async getAll(): Promise<ResponseT> {
     const listHotel: Hotel[] = await this.hotelRepository.find();
 
-    const response = new Response(200, 'Success', listHotel);
+    const response = new ResponseT(200, 'Success', listHotel);
     return response;
   }
 }

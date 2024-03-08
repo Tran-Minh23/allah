@@ -6,7 +6,7 @@ const api = (): AxiosInstance => {
     timeout: 10000,
   });
 
-  return instance
-}
+  return instance;
+};
 
-export default api()
+export default api();

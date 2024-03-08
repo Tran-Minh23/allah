@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Response } from 'src/common/response';
+import { ResponseT } from 'src/common/responseT';
 import { LoginDto } from '../dtos/login.dto';
 import { User } from 'src/database/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,7 +18,7 @@ export class LoginService {
     private jwtService: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto): Promise<Response> {
+  async login(loginDto: LoginDto): Promise<ResponseT> {
     let token: string;
 
     const user = await this.usersRepository.findOne({
@@ -44,7 +44,7 @@ export class LoginService {
       throw new HttpException('Invalid password', HttpStatus.BAD_REQUEST);
     }
 
-    const response = new Response(200, 'Success', token);
+    const response = new ResponseT(200, 'Success', token);
     return response;
   }
 

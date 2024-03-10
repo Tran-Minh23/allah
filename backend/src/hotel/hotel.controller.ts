@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ResponseT } from 'src/common/responseT';
 import { ListService } from './list/list.service';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
@@ -14,9 +14,9 @@ export class HotelController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('detail')
-  async getHotelDetail(): Promise<ResponseT> {
-    const response = await this.listService.getAll();
+  @Get(':id')
+  async getHotelDetail(@Param('id') id: number): Promise<ResponseT> {
+    const response = await this.listService.getDetail(id);
     return response;
   }
 }

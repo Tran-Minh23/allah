@@ -17,3 +17,7 @@ export const setCookie = async (name: string, value: string) => {
 export const checkCookie = (name: string): boolean => {
   return cookies().has(name);
 };
+
+export const getCookie = (name: string): string | undefined => {
+  return cookies().get(name)?.value;
+};

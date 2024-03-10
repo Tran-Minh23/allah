@@ -4,7 +4,9 @@ import Image from 'next/image';
 import LoginModal from './LoginModal';
 import { useDisclosure } from '@nextui-org/react';
 import RegisterModal from './RegisterModal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { checkCookie, getCookie } from '@/app/actions';
+import { parseJwt } from '@/services/helper';
 
 export default function Header() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -29,6 +31,22 @@ export default function Header() {
     setIsOpenRegister(e);
     onOpenChange();
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const cookie = await getCookie('token');
+
+      if (cookie) {
+        setIsLogin(true);
+
+        const parsedToken = parseJwt(cookie);
+
+        setName(parsedToken.username);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="sticky top-0 z-[999] shadow-md bg-white">

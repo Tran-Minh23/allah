@@ -7,21 +7,19 @@ import { Request } from 'express';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromExtractors([
-        JwtStrategy.extractJWTFromCookie,
-      ]),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: 'veryComplexSecret',
     });
   }
 
-  private static extractJWTFromCookie(req: Request): string | null {
-    if (req?.cookies?.token) {
-      return req.cookies.token;
-    }
+  // private static extractJWTFromCookie(req: Request): string | null {
+  //   if (req?.cookies?.token) {
+  //     return req.cookies.token;
+  //   }
 
-    return null;
-  }
+  //   return null;
+  // }
 
   async validate(payload: any) {
     return {

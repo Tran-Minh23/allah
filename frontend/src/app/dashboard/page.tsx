@@ -10,7 +10,6 @@ import {
   Divider,
 } from '@nextui-org/react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
